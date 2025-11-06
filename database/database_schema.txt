@@ -1,0 +1,123 @@
+СТРУКТУРА БАЗЫ ДАННЫХ - Система управления меню столовой
+===========================================================
+
+┌─────────────────────────────────────┐
+│          CATEGORIES                 │
+│  (Категории блюд)                   │
+├─────────────────────────────────────┤
+│ PK  id           SERIAL              │
+│     name         VARCHAR(100) UNIQUE │
+│     description  TEXT                │
+└─────────────────────────────────────┘
+                │
+                │ 1
+                │
+                │
+                │ N
+┌─────────────────────────────────────┐
+│            DISHES                   │
+│  (Блюда)                            │
+├─────────────────────────────────────┤
+│ PK  id             SERIAL            │
+│     name           VARCHAR(200)      │
+│ FK  category_id    INTEGER           │
+│     description    TEXT              │
+│     price          DECIMAL(10,2)     │
+│     weight         INTEGER           │
+│     is_available   BOOLEAN           │
+└─────────────────────────────────────┘
+                │
+                │ N
+                │
+                │
+                │ N
+┌─────────────────────────────────────┐
+│       DISH_INGREDIENTS              │
+│  (Связь блюд и ингредиентов)        │
+├─────────────────────────────────────┤
+│ PK,FK dish_id        INTEGER         │
+│ PK,FK ingredient_id  INTEGER         │
+│       quantity       DECIMAL(10,2)   │
+└─────────────────────────────────────┘
+                │
+                │ N
+                │
+                │
+                │ 1
+┌─────────────────────────────────────┐
+│         INGREDIENTS                 │
+│  (Ингредиенты)                      │
+├─────────────────────────────────────┤
+│ PK  id    SERIAL                    │
+│     name  VARCHAR(100) UNIQUE       │
+│     unit  VARCHAR(20)               │
+└─────────────────────────────────────┘
+
+
+СВЯЗИ:
+======
+
+1. categories (1) ← (N) dishes
+   Каждая категория может содержать множество блюд
+   Каждое блюдо принадлежит одной категории
+   ON DELETE CASCADE - при удалении категории удаляются все блюда
+
+2. dishes (N) ← → (N) ingredients
+   Связь многие-ко-многим через таблицу dish_ingredients
+   Каждое блюдо может содержать множество ингредиентов
+   Каждый ингредиент может входить в множество блюд
+   ON DELETE CASCADE - при удалении блюда/ингредиента удаляются связи
+
+
+ИНДЕКСЫ:
+=========
+
+1. idx_dishes_category
+   CREATE INDEX ON dishes(category_id)
+   Ускоряет фильтрацию блюд по категориям
+
+2. idx_dishes_available
+   CREATE INDEX ON dishes(is_available)
+   Ускоряет поиск доступных блюд
+
+3. idx_dish_ingredients_dish
+   CREATE INDEX ON dish_ingredients(dish_id)
+   Ускоряет поиск ингредиентов для блюда
+
+4. idx_dish_ingredients_ingredient
+   CREATE INDEX ON dish_ingredients(ingredient_id)
+   Ускоряет поиск блюд с определенным ингредиентом
+
+
+ПРИМЕРЫ ЗАПРОСОВ:
+==================
+
+1. Получить все блюда с категориями:
+   SELECT d.*, c.name as category_name
+   FROM dishes d
+   JOIN categories c ON d.category_id = c.id
+   ORDER BY c.name, d.name;
+
+2. Получить состав конкретного блюда:
+   SELECT i.name, i.unit, di.quantity
+   FROM dish_ingredients di
+   JOIN ingredients i ON di.ingredient_id = i.id
+   WHERE di.dish_id = ?;
+
+3. Получить блюда по категории:
+   SELECT d.*
+   FROM dishes d
+   WHERE d.category_id = ?
+   ORDER BY d.name;
+
+4. Подсчет блюд в каждой категории:
+   SELECT c.name, COUNT(d.id) as dish_count
+   FROM categories c
+   LEFT JOIN dishes d ON c.id = d.category_id
+   GROUP BY c.id, c.name;
+
+5. Найти блюда, содержащие определенный ингредиент:
+   SELECT DISTINCT d.*
+   FROM dishes d
+   JOIN dish_ingredients di ON d.id = di.dish_id
+   WHERE di.ingredient_id = ?;
