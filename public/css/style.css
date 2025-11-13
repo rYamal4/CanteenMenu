@@ -1,6 +1,3 @@
-/* Пользовательские стили для системы управления меню столовой */
-
-/* Общие стили */
 body {
     min-height: 100vh;
     display: flex;
@@ -12,7 +9,6 @@ body {
     flex: 1;
 }
 
-/* Навигация */
 .navbar-brand {
     font-weight: bold;
     font-size: 1.5rem;
@@ -22,7 +18,6 @@ body {
     font-weight: bold;
 }
 
-/* Карточки */
 .card {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -38,7 +33,6 @@ body {
     font-weight: 600;
 }
 
-/* Jumbotron для главной страницы */
 .jumbotron {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -48,7 +42,6 @@ body {
     font-weight: bold;
 }
 
-/* Таблицы */
 .table {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -63,7 +56,6 @@ body {
     background-color: rgba(0, 0, 0, 0.02);
 }
 
-/* Кнопки */
 .btn {
     transition: all 0.2s;
 }
@@ -73,26 +65,22 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Формы */
 .form-control:focus,
 .form-select:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
 }
 
-/* Бейджи */
 .badge {
     padding: 0.5em 0.75em;
     font-size: 0.9em;
 }
 
-/* Подвал */
 footer {
     margin-top: auto;
     border-top: 1px solid #dee2e6;
 }
 
-/* Анимации */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -109,7 +97,6 @@ footer {
     animation: fadeIn 0.3s ease-in;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .jumbotron {
         padding: 2rem 1rem !important;
@@ -124,12 +111,10 @@ footer {
     }
 }
 
-/* Дополнительные стили для списка ингредиентов */
 .ingredient-row {
     animation: fadeIn 0.3s ease-in;
 }
 
-/* Стили для карточек блюд */
 .card-footer {
     background-color: #f8f9fa;
     border-top: 1px solid rgba(0, 0, 0, 0.125);
@@ -139,26 +124,22 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Улучшенный внешний вид для описания блюд */
 .card-text {
     color: #6c757d;
     font-size: 0.95rem;
     line-height: 1.5;
 }
 
-/* Стили для страницы деталей */
 .table tbody th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #495057;
 }
 
-/* Hover эффекты для строк таблицы */
 .table tbody tr:hover {
     background-color: rgba(13, 110, 253, 0.05);
 }
 
-/* Стили для алертов */
 .alert {
     border-radius: 0.5rem;
     border: none;
@@ -169,7 +150,6 @@ footer {
     color: #084298;
 }
 
-/* Стили для заголовков */
 h1, h2, h3, h4, h5 {
     color: #212529;
     font-weight: 600;

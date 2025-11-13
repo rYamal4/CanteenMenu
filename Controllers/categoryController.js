@@ -1,10 +1,7 @@
-// Контроллер для работы с категориями блюд
 const pool = require('../db');
 
-// Получение списка всех категорий
 exports.getCategories = async (req, res) => {
     try {
-        // Получаем все категории с подсчетом количества блюд в каждой
         const query = `
             SELECT c.*, COUNT(d.id) as dish_count
             FROM categories c
@@ -26,7 +23,6 @@ exports.getCategories = async (req, res) => {
     }
 };
 
-// Страница добавления новой категории
 exports.getAddCategory = (req, res) => {
     res.render('Categories/addCategory', {
         title: 'Добавить категорию',
@@ -34,7 +30,6 @@ exports.getAddCategory = (req, res) => {
     });
 };
 
-// Обработка добавления новой категории
 exports.postAddCategory = async (req, res) => {
     const { name, description } = req.body;
 
@@ -46,7 +41,6 @@ exports.postAddCategory = async (req, res) => {
     } catch (err) {
         console.error('Ошибка при добавлении категории:', err);
 
-        // Проверка на уникальность имени категории
         if (err.code === '23505') {
             res.status(400).send('Категория с таким названием уже существует');
         } else {
@@ -55,7 +49,6 @@ exports.postAddCategory = async (req, res) => {
     }
 };
 
-// Страница редактирования категории
 exports.getEditCategory = async (req, res) => {
     try {
         const categoryId = req.params.id;
@@ -77,7 +70,6 @@ exports.getEditCategory = async (req, res) => {
     }
 };
 
-// Обработка редактирования категории
 exports.postEditCategory = async (req, res) => {
     const categoryId = req.params.id;
     const { name, description } = req.body;
@@ -90,7 +82,6 @@ exports.postEditCategory = async (req, res) => {
     } catch (err) {
         console.error('Ошибка при редактировании категории:', err);
 
-        // Проверка на уникальность имени категории
         if (err.code === '23505') {
             res.status(400).send('Категория с таким названием уже существует');
         } else {
@@ -99,12 +90,10 @@ exports.postEditCategory = async (req, res) => {
     }
 };
 
-// Удаление категории
 exports.deleteCategory = async (req, res) => {
     const categoryId = req.params.id;
 
     try {
-        // Проверяем, есть ли блюда в этой категории
         const checkResult = await pool.query(
             'SELECT COUNT(*) FROM dishes WHERE category_id = $1',
             [categoryId]
@@ -118,7 +107,6 @@ exports.deleteCategory = async (req, res) => {
             );
         }
 
-        // Удаляем категорию
         await pool.query('DELETE FROM categories WHERE id = $1', [categoryId]);
         res.redirect('/categories');
     } catch (err) {

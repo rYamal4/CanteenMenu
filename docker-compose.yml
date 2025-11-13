@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Сервис PostgreSQL
   postgres:
     image: postgres:15-alpine
     container_name: canteen_postgres
@@ -11,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
       POSTGRES_DB: ${DATABASE_NAME:-canteen_db}
     ports:
-      - "10748:5432"  # Нестандартный внешний порт 10748
+      - "10748:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/create_db.sql:/docker-entrypoint-initdb.d/init.sql
@@ -21,7 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Сервис Node.js приложения
   app:
     build: .
     container_name: canteen_app
@@ -42,7 +40,6 @@ services:
       - .:/app
       - /app/node_modules
 
-# Volumes для сохранения данных PostgreSQL
 volumes:
   postgres_data:
     driver: local

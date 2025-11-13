@@ -1,10 +1,7 @@
-// Контроллер для работы с ингредиентами
 const pool = require('../db');
 
-// Получение списка всех ингредиентов
 exports.getIngredients = async (req, res) => {
     try {
-        // Получаем все ингредиенты с подсчетом количества блюд, использующих их
         const query = `
             SELECT i.*, COUNT(di.dish_id) as usage_count
             FROM ingredients i
@@ -26,7 +23,6 @@ exports.getIngredients = async (req, res) => {
     }
 };
 
-// Страница добавления нового ингредиента
 exports.getAddIngredient = (req, res) => {
     res.render('Ingredients/addIngredient', {
         title: 'Добавить ингредиент',
@@ -34,7 +30,6 @@ exports.getAddIngredient = (req, res) => {
     });
 };
 
-// Обработка добавления нового ингредиента
 exports.postAddIngredient = async (req, res) => {
     const { name, unit } = req.body;
 
@@ -46,7 +41,6 @@ exports.postAddIngredient = async (req, res) => {
     } catch (err) {
         console.error('Ошибка при добавлении ингредиента:', err);
 
-        // Проверка на уникальность имени ингредиента
         if (err.code === '23505') {
             res.status(400).send('Ингредиент с таким названием уже существует');
         } else {
@@ -55,7 +49,6 @@ exports.postAddIngredient = async (req, res) => {
     }
 };
 
-// Страница редактирования ингредиента
 exports.getEditIngredient = async (req, res) => {
     try {
         const ingredientId = req.params.id;
@@ -77,7 +70,6 @@ exports.getEditIngredient = async (req, res) => {
     }
 };
 
-// Обработка редактирования ингредиента
 exports.postEditIngredient = async (req, res) => {
     const ingredientId = req.params.id;
     const { name, unit } = req.body;
@@ -90,7 +82,6 @@ exports.postEditIngredient = async (req, res) => {
     } catch (err) {
         console.error('Ошибка при редактировании ингредиента:', err);
 
-        // Проверка на уникальность имени ингредиента
         if (err.code === '23505') {
             res.status(400).send('Ингредиент с таким названием уже существует');
         } else {
@@ -99,12 +90,10 @@ exports.postEditIngredient = async (req, res) => {
     }
 };
 
-// Удаление ингредиента
 exports.deleteIngredient = async (req, res) => {
     const ingredientId = req.params.id;
 
     try {
-        // Проверяем, используется ли ингредиент в блюдах
         const checkResult = await pool.query(
             'SELECT COUNT(*) FROM dish_ingredients WHERE ingredient_id = $1',
             [ingredientId]
@@ -118,7 +107,6 @@ exports.deleteIngredient = async (req, res) => {
             );
         }
 
-        // Удаляем ингредиент
         await pool.query('DELETE FROM ingredients WHERE id = $1', [ingredientId]);
         res.redirect('/ingredients');
     } catch (err) {
