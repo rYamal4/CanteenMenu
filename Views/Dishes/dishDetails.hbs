@@ -8,6 +8,11 @@
 <div class="row">
     <div class="col-md-8">
         <div class="card">
+            {{#if dish.image_url}}
+                <img src="{{dish.image_url}}" class="card-img-top" alt="{{dish.name}}" style="max-height: 400px; object-fit: cover;">
+            {{else}}
+                <div class="dish-image-placeholder" style="height: 300px;">🍽️</div>
+            {{/if}}
             <div class="card-body">
                 <h5 class="card-title">Информация о блюде</h5>
 

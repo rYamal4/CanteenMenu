@@ -31,6 +31,11 @@
     {{#each dishes}}
     <div class="col-md-4 mb-3">
         <div class="card h-100">
+            {{#if this.image_url}}
+                <img src="{{this.image_url}}" class="card-img-top" alt="{{this.name}}">
+            {{else}}
+                <div class="dish-image-placeholder">🍽️</div>
+            {{/if}}
             <div class="card-body">
                 <h5 class="card-title">{{this.name}}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{this.category_name}}</h6>

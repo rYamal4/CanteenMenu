@@ -59,7 +59,7 @@ exports.getAddDish = async (req, res) => {
 };
 
 exports.postAddDish = async (req, res) => {
-    const { name, category_id, description, price, weight, is_available, ingredients } = req.body;
+    const { name, category_id, description, price, weight, is_available, image_url, ingredients } = req.body;
 
     const client = await pool.connect();
 
@@ -67,8 +67,8 @@ exports.postAddDish = async (req, res) => {
         await client.query('BEGIN');
 
         const insertQuery = `
-            INSERT INTO dishes (name, category_id, description, price, weight, is_available)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO dishes (name, category_id, description, price, weight, is_available, image_url)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id
         `;
         const values = [
@@ -77,7 +77,8 @@ exports.postAddDish = async (req, res) => {
             description || null,
             parseFloat(price),
             weight ? parseInt(weight) : null,
-            is_available === 'on' ? true : false
+            is_available === 'on' ? true : false,
+            image_url || null
         ];
 
         const result = await client.query(insertQuery, values);
@@ -143,7 +144,7 @@ exports.getEditDish = async (req, res) => {
 
 exports.postEditDish = async (req, res) => {
     const dishId = req.params.id;
-    const { name, category_id, description, price, weight, is_available, ingredients } = req.body;
+    const { name, category_id, description, price, weight, is_available, image_url, ingredients } = req.body;
 
     const client = await pool.connect();
 
@@ -153,8 +154,8 @@ exports.postEditDish = async (req, res) => {
         const updateQuery = `
             UPDATE dishes
             SET name = $1, category_id = $2, description = $3,
-                price = $4, weight = $5, is_available = $6
-            WHERE id = $7
+                price = $4, weight = $5, is_available = $6, image_url = $7
+            WHERE id = $8
         `;
         const values = [
             name,
@@ -163,6 +164,7 @@ exports.postEditDish = async (req, res) => {
             parseFloat(price),
             weight ? parseInt(weight) : null,
             is_available === 'on' ? true : false,
+            image_url || null,
             dishId
         ];
 

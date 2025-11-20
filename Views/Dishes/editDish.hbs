@@ -29,6 +29,12 @@
                 <textarea class="form-control" id="description" name="description" rows="3">{{dish.description}}</textarea>
             </div>
 
+            <div class="mb-3">
+                <label for="image_url" class="form-label">URL изображения</label>
+                <input type="url" class="form-control" id="image_url" name="image_url" value="{{dish.image_url}}" placeholder="https://example.com/image.jpg">
+                <div class="form-text">Введите ссылку на изображение блюда (необязательно)</div>
+            </div>
+
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="price" class="form-label">Цена (руб.) *</label>

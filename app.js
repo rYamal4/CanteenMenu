@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const hbs = require('hbs');
+const { engine } = require('express-handlebars');
 const path = require('path');
 
 const pool = require('./db');
@@ -13,14 +13,21 @@ const ingredientRouter = require('./Routes/ingredientRouter');
 const app = express();
 const PORT = 3000;
 
+// Настройка Handlebars
+app.engine('hbs', engine({
+    extname: 'hbs',
+    defaultLayout: 'main',
+    layoutsDir: path.join(__dirname, 'Views', 'layouts'),
+    partialsDir: path.join(__dirname, 'Views', 'partials'),
+    helpers: {
+        eq: function (a, b) {
+            return a == b;
+        }
+    }
+}));
+
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'Views'));
-
-hbs.registerPartials(path.join(__dirname, 'Views', 'partials'));
-
-hbs.registerHelper('eq', function (a, b) {
-    return a == b;
-});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

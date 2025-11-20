@@ -17,6 +17,7 @@ CREATE TABLE dishes (
     price DECIMAL(10, 2) NOT NULL,
     weight INTEGER,
     is_available BOOLEAN DEFAULT TRUE,
+    image_url TEXT,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
