@@ -3,25 +3,67 @@ const pool = require('../db');
 exports.getDishes = async (req, res) => {
     try {
         const categoryId = req.query.category_id;
+        const priceRange = req.query.price_range;
+
+        // Динамическое построение WHERE условий
+        let whereClauses = [];
+        let params = [];
+        let paramCounter = 1;
+
+        // Добавить фильтр по категории
+        if (categoryId) {
+            whereClauses.push(`d.category_id = $${paramCounter}`);
+            params.push(categoryId);
+            paramCounter++;
+        }
+
+        // Добавить фильтр по цене
+        if (priceRange) {
+            let priceCondition = '';
+            switch(priceRange) {
+                case 'under50':
+                    priceCondition = `d.price < $${paramCounter}`;
+                    params.push(50);
+                    paramCounter++;
+                    break;
+                case '50-100':
+                    priceCondition = `d.price >= $${paramCounter} AND d.price < $${paramCounter + 1}`;
+                    params.push(50, 100);
+                    paramCounter += 2;
+                    break;
+                case '100-150':
+                    priceCondition = `d.price >= $${paramCounter} AND d.price < $${paramCounter + 1}`;
+                    params.push(100, 150);
+                    paramCounter += 2;
+                    break;
+                case '150-200':
+                    priceCondition = `d.price >= $${paramCounter} AND d.price < $${paramCounter + 1}`;
+                    params.push(150, 200);
+                    paramCounter += 2;
+                    break;
+                case 'over200':
+                    priceCondition = `d.price >= $${paramCounter}`;
+                    params.push(200);
+                    paramCounter++;
+                    break;
+            }
+            if (priceCondition) {
+                whereClauses.push(priceCondition);
+            }
+        }
+
+        // Собрать итоговый запрос
+        const baseQuery = `
+            SELECT d.*, c.name as category_name
+            FROM dishes d
+            JOIN categories c ON d.category_id = c.id
+        `;
 
         let query;
-        let params = [];
-        if (categoryId) {
-            query = `
-                SELECT d.*, c.name as category_name
-                FROM dishes d
-                JOIN categories c ON d.category_id = c.id
-                WHERE d.category_id = $1
-                ORDER BY d.name
-            `;
-            params = [categoryId];
+        if (whereClauses.length > 0) {
+            query = baseQuery + ' WHERE ' + whereClauses.join(' AND ') + ' ORDER BY d.name';
         } else {
-            query = `
-                SELECT d.*, c.name as category_name
-                FROM dishes d
-                JOIN categories c ON d.category_id = c.id
-                ORDER BY c.name, d.name
-            `;
+            query = baseQuery + ' ORDER BY c.name, d.name';
         }
 
         const dishesResult = await pool.query(query, params);
@@ -33,6 +75,7 @@ exports.getDishes = async (req, res) => {
             dishes: dishesResult.rows,
             categories: categoriesResult.rows,
             selectedCategory: categoryId,
+            selectedPriceRange: priceRange,
             activePage: 'dishes'
         });
     } catch (err) {

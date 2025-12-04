@@ -22,6 +22,9 @@ app.engine('hbs', engine({
     helpers: {
         eq: function (a, b) {
             return a == b;
+        },
+        or: function (a, b) {
+            return a || b;
         }
     }
 }));

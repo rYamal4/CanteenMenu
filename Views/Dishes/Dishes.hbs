@@ -10,8 +10,9 @@
         <a href="/dishes/add" class="btn btn-success">+ Добавить блюдо</a>
     </div>
     <div class="col-md-6">
-        <form method="GET" action="/dishes" class="d-flex">
-            <select name="category_id" class="form-select me-2" onchange="this.form.submit()">
+        <form method="GET" action="/dishes" class="d-flex gap-2">
+            <!-- Фильтр по категории -->
+            <select name="category_id" class="form-select" onchange="this.form.submit()">
                 <option value="">Все категории</option>
                 {{#each categories}}
                     <option value="{{this.id}}" {{#if (eq this.id ../selectedCategory)}}selected{{/if}}>
@@ -19,7 +20,19 @@
                     </option>
                 {{/each}}
             </select>
-            {{#if selectedCategory}}
+
+            <!-- Фильтр по цене -->
+            <select name="price_range" class="form-select" onchange="this.form.submit()">
+                <option value="">Все цены</option>
+                <option value="under50" {{#if (eq selectedPriceRange 'under50')}}selected{{/if}}>До 50 руб</option>
+                <option value="50-100" {{#if (eq selectedPriceRange '50-100')}}selected{{/if}}>50-100 руб</option>
+                <option value="100-150" {{#if (eq selectedPriceRange '100-150')}}selected{{/if}}>100-150 руб</option>
+                <option value="150-200" {{#if (eq selectedPriceRange '150-200')}}selected{{/if}}>150-200 руб</option>
+                <option value="over200" {{#if (eq selectedPriceRange 'over200')}}selected{{/if}}>От 200 руб</option>
+            </select>
+
+            <!-- Кнопка сброса (показывается если активен любой фильтр) -->
+            {{#if (or selectedCategory selectedPriceRange)}}
                 <a href="/dishes" class="btn btn-secondary">Сбросить</a>
             {{/if}}
         </form>
@@ -69,8 +82,8 @@
 {{else}}
 <div class="alert alert-info">
     Блюда не найдены.
-    {{#if selectedCategory}}
-        Попробуйте выбрать другую категорию или <a href="/dishes">посмотреть все блюда</a>.
+    {{#if (or selectedCategory selectedPriceRange)}}
+        Попробуйте изменить фильтры или <a href="/dishes">посмотреть все блюда</a>.
     {{else}}
         <a href="/dishes/add">Добавьте первое блюдо</a>.
     {{/if}}
