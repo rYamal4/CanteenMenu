@@ -34,6 +34,17 @@
                         <a class="nav-link {{#if (eq activePage 'ingredients')}}active{{/if}}" href="/ingredients">Ингредиенты</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{#if (eq activePage 'cart')}}active{{/if}}" href="/cart">
+                            Корзина
+                            {{#if cartCount}}
+                            <span class="badge bg-danger rounded-pill">{{cartCount}}</span>
+                            {{/if}}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{#if (eq activePage 'orders')}}active{{/if}}" href="/orders">Мои заказы</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{#if (eq activePage 'about')}}active{{/if}}" href="/about">О программе</a>
                     </li>
                 </ul>

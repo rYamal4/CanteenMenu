@@ -125,3 +125,64 @@ CREATE INDEX idx_dishes_category ON dishes(category_id);
 CREATE INDEX idx_dishes_available ON dishes(is_available);
 CREATE INDEX idx_dish_ingredients_dish ON dish_ingredients(dish_id);
 CREATE INDEX idx_dish_ingredients_ingredient ON dish_ingredients(ingredient_id);
+
+-- ============================================
+-- ORDER SYSTEM TABLES
+-- ============================================
+
+-- Пользователи
+DROP TABLE IF EXISTS users CASCADE;
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Корзина
+DROP TABLE IF EXISTS cart_items CASCADE;
+CREATE TABLE cart_items (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    dish_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (dish_id) REFERENCES dishes(id) ON DELETE CASCADE,
+    UNIQUE(user_id, dish_id)
+);
+
+-- Заказы
+DROP TABLE IF EXISTS orders CASCADE;
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Позиции заказа
+DROP TABLE IF EXISTS order_items CASCADE;
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER NOT NULL,
+    dish_id INTEGER NOT NULL,
+    dish_name VARCHAR(200) NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    price_at_purchase DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (dish_id) REFERENCES dishes(id) ON DELETE SET NULL
+);
+
+-- Индексы для оптимизации
+CREATE INDEX idx_cart_items_user ON cart_items(user_id);
+CREATE INDEX idx_orders_user ON orders(user_id);
+CREATE INDEX idx_orders_created_at ON orders(created_at DESC);
+CREATE INDEX idx_order_items_order ON order_items(order_id);
+
+-- Дефолтный пользователь
+INSERT INTO users (first_name, last_name, email, phone) VALUES
+('Иван', 'Петров', 'ivan.petrov@example.com', '+7-900-123-45-67');

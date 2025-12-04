@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1>Мои заказы</h1>
+        <hr>
+    </div>
+</div>
+
+{{#if orders.length}}
+<div class="row">
+    <div class="col-md-12">
+        {{#each orders}}
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="mb-0">Заказ #{{this.id}}</h5>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span class="text-muted">{{this.created_at}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Блюдо</th>
+                            <th>Количество</th>
+                            <th>Цена</th>
+                            <th>Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each this.items}}
+                        <tr>
+                            <td>{{this.dish_name}}</td>
+                            <td>{{this.quantity}}</td>
+                            <td>{{this.price_at_purchase}} руб.</td>
+                            <td><strong>{{this.subtotal}} руб.</strong></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <hr>
+                <div class="text-end">
+                    <h5>Итого: <strong>{{this.total_amount}} руб.</strong></h5>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{else}}
+<div class="alert alert-info">
+    <h4>У вас пока нет заказов</h4>
+    <p>Перейдите в <a href="/dishes">меню</a>, чтобы добавить блюда в корзину и сделать заказ.</p>
+</div>
+{{/if}}

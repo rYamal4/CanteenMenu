@@ -2,13 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { engine } = require('express-handlebars');
 const path = require('path');
+const session = require('express-session');
 
 const pool = require('./db');
+const autoLogin = require('./middleware/autoLogin');
 
 const homeRouter = require('./Routes/homeRouter');
 const dishRouter = require('./Routes/dishRouter');
 const categoryRouter = require('./Routes/categoryRouter');
 const ingredientRouter = require('./Routes/ingredientRouter');
+const cartRouter = require('./Routes/cartRouter');
+const orderRouter = require('./Routes/orderRouter');
 
 const app = express();
 const PORT = 3000;
@@ -36,10 +40,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session configuration
+app.use(session({
+    secret: 'canteen-menu-secret-key-2024',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }
+}));
+
+// Auto-login middleware
+app.use(autoLogin);
+
 app.use('/', homeRouter);
 app.use('/dishes', dishRouter);
 app.use('/categories', categoryRouter);
 app.use('/ingredients', ingredientRouter);
+app.use('/cart', cartRouter);
+app.use('/orders', orderRouter);
 
 app.use((req, res) => {
     res.status(404).render('Home/Index', {
